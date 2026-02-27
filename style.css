@@ -58,5 +58,13 @@ button:hover {
 
 #status {
   margin-top: 1rem;
-  font-size: .9rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  min-height: 1.5rem;
+  text-align: center;
+}
+
+#status:empty {
+  display: none; /* Hide when empty */
 }
