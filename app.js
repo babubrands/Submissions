@@ -1,34 +1,43 @@
-// 🔐 Supabase credentials
-const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_PUBLIC_ANON_KEY";
+// Initialize Supabase client
+const supabaseUrl = 'xcpxvwioysbxoxeisinj'
+const supabaseAnonKey = 'sb_publishable_n_o-QTxWJdj-xJ39_xRO4A__MNM1mus'
+const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey)
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-
-const form = document.getElementById("contactForm");
-const status = document.getElementById("status");
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  status.textContent = "Submitting...";
-
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const message = document.getElementById("message").value.trim();
-
-  const { error } = await supabase
-    .from("submissions")
-    .insert([{ name, email, message }]);
-
-  if (error) {
-    console.error(error);
-    status.textContent = "❌ Failed to submit";
-    status.style.color = "red";
-  } else {
-    status.textContent = "✅ Submitted successfully";
-    status.style.color = "lime";
-    form.reset();
+// Handle form submission
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  
+  const statusEl = document.getElementById('status')
+  const submitBtn = e.target.querySelector('button[type="submit"]')
+  
+  // Disable button while submitting
+  submitBtn.disabled = true
+  submitBtn.textContent = 'Sending...'
+  statusEl.textContent = ''
+  
+  // Get form values
+  const formData = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    message: document.getElementById('message').value
   }
-});
+  
+  // Insert into Supabase
+  const { data, error } = await supabase
+    .from('submissions')
+    .insert([formData])
+  
+  // Handle response
+  if (error) {
+    statusEl.textContent = '❌ Error: ' + error.message
+    statusEl.style.color = 'red'
+  } else {
+    statusEl.textContent = '✅ Message sent successfully!'
+    statusEl.style.color = 'green'
+    e.target.reset() // Clear form
+  }
+  
+  // Re-enable button
+  submitBtn.disabled = false
+  submitBtn.textContent = 'Submit'
+})
